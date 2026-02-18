@@ -14,14 +14,21 @@ $parts = parse_url($url);
 $host = $parts['host'];
 $user = $parts['user'];
 $pass = $parts['pass'];
-$db   = ltrim($parts['path'],'/');
+$port = $parts['port'] ?? 3306;
 
-$conn = new mysqli($host, $user, $pass, $db);
+// 🔥 Esta línea corregida
+$db = isset($parts['path']) ? ltrim($parts['path'], '/') : '';
+
+if (empty($db)) {
+    die("No se pudo obtener el nombre de la base de datos");
+}
+
+$conn = new mysqli($host, $user, $pass, $db, $port);
 
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-echo "✅ Conectado correctamente a la base de datos";
+echo "✅ Conectado correctamente a la base de datos: " . $db;
 
 ?>
